@@ -9,32 +9,33 @@ datasource db {
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement()) @map("id")
-  name      String   @map("name")
-  email     String   @unique @map("email")
-  phone     String   @map("phone")
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 model Category {
-  id      Int       @id @default(autoincrement()) @map("id")
-  name    String    @unique @map("name")
+  id      Int       @id @default(autoincrement())
+  name    String    @unique
   product Product[]
 }
 
 model Trader {
-  id        Int      @id @default(autoincrement()) @map("id")
-  fullName  String   @map("full_name")
-  email     String   @unique @map("email")
-  phone     String?  @map("phone")
-  location  String   @map("location")
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  fullName  String
+  email     String   @unique
+  password  String
+  phone     String?
+  location  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   product Product[]
-  trade   Trade[]
+  trade   Trade_transaction[]
   rate    Rate[]
   payment Payment[]
 
@@ -43,24 +44,24 @@ model Trader {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement()) @map("id")
-  name        String   @map("name")
-  description String   @map("description")
-  category_id Int      @map("category_id")
-  trader_id   Int      @map("trader_id")
-  price       Float    @map("price")
-  quantity    Int      @map("quantity")
-  image1      String?  @map("image1")
-  image2      String?  @map("image2")
-  image3      String?  @map("image3")
-  image4      String?  @map("image4")
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  category_id Int
+  trader_id   Int
+  price       Float
+  quantity    Int
+  image1      String?
+  image2      String?
+  image3      String?
+  image4      String?
   createdAt   DateTime @default(now())
 
-  trade    Trade[]
+  trade    Trade_transaction[]
   rate     Rate[]
   payment  Payment[]
-  category Category  @relation(fields: [category_id], references: [id])
-  trader   Trader    @relation(fields: [trader_id], references: [id])
+  category Category            @relation(fields: [category_id], references: [id])
+  trader   Trader              @relation(fields: [trader_id], references: [id])
 
   @@index([category_id])
   @@index([price])
@@ -69,22 +70,22 @@ model Product {
 }
 
 model PriceHistory {
-  id         Int      @id @default(autoincrement()) @map("id")
-  price      Float    @map("price")
-  product_id Int      @map("product_id")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id         Int      @id @default(autoincrement())
+  price      Float
+  product_id Int
+  createdAt  DateTime @default(now())
 
   @@index([product_id])
 }
 
-model Trade {
-  id             Int      @id @default(autoincrement()) @map("id")
-  product_id     Int      @map("product_id")
-  trader_id      Int      @map("trader_id")
-  buyer_id       Int      @map("buyer_id")
-  quantity       Int      @map("quantity")
-  transaction_id Int      @map("transaction_id")
-  createdAt      DateTime @default(now()) @map("created_at")
+model Trade_transaction {
+  id             Int      @id @default(autoincrement())
+  product_id     Int
+  trader_id      Int
+  buyer_id       Int
+  quantity       Int
+  transaction_id Int
+  createdAt      DateTime @default(now())
 
   product Product @relation(fields: [product_id], references: [id])
   trader  Trader  @relation(fields: [trader_id], references: [id])
@@ -95,11 +96,11 @@ model Trade {
 }
 
 model Rate {
-  id         Int      @id @default(autoincrement()) @map("id")
-  trader_id  Int      @map("trader_id")
-  product_id Int      @map("product_id")
-  rate       Int      @map("rate")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id         Int      @id @default(autoincrement())
+  trader_id  Int
+  product_id Int
+  rate       Int
+  createdAt  DateTime @default(now())
 
   trader  Trader  @relation(fields: [trader_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
@@ -109,11 +110,11 @@ model Rate {
 }
 
 model Payment {
-  id         Int   @id @default(autoincrement()) @map("id")
-  trader_id  Int   @map("trader_id")
-  payer_id   Int   @map("payer_id")
-  product_id Int   @map("product_id")
-  price      Float @map("price")
+  id         Int   @id @default(autoincrement())
+  trader_id  Int
+  payer_id   Int
+  product_id Int
+  price      Float
 
   trader  Trader  @relation(fields: [trader_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
