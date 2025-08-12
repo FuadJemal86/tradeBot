@@ -57,11 +57,12 @@ model Product {
   image4      String?
   createdAt   DateTime @default(now())
 
-  trade    Trade_transaction[]
-  rate     Rate[]
-  payment  Payment[]
-  category Category            @relation(fields: [category_id], references: [id])
-  trader   Trader              @relation(fields: [trader_id], references: [id])
+  trade         Trade_transaction[]
+  rate          Rate[]
+  payment       Payment[]
+  product_price Product_Price[]
+  category      Category            @relation(fields: [category_id], references: [id])
+  trader        Trader              @relation(fields: [trader_id], references: [id])
 
   @@index([category_id])
   @@index([price])
@@ -69,11 +70,12 @@ model Product {
   @@index([createdAt])
 }
 
-model PriceHistory {
+model Product_Price {
   id         Int      @id @default(autoincrement())
   price      Float
   product_id Int
   createdAt  DateTime @default(now())
+  product    Product  @relation(fields: [product_id], references: [id])
 
   @@index([product_id])
 }
