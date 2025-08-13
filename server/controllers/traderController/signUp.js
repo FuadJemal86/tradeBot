@@ -15,6 +15,14 @@ const signUp = async (req, res) => {
             return res.status(400).json({ message: validate.error.details[0].message });
         }
 
+        const checkExist = await prisma.trader.findFirst({
+            where: { email: email }
+        })
+
+        if (checkExist) {
+            return res.status(200).json({ status: false, message: 'this user already exist' })
+        }
+
         const hash = await bcrypt.hash(password, 10)
 
         const data = {
@@ -25,9 +33,7 @@ const signUp = async (req, res) => {
             location: location
         }
 
-        await prisma.trader.create({
-            data
-        })
+        await prisma.trader.create({ data })
 
         return res.status(200).json({ status: true, message: 'Registered Successfully' })
     } catch (err) {
