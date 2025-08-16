@@ -12,7 +12,8 @@ import {
     Menu,
     X,
     Moon,
-    Sun
+    Sun,
+    ConeIcon
 } from 'lucide-react';
 
 const Products = () => {
@@ -23,10 +24,8 @@ const Products = () => {
 
     // Simulate localStorage check for dark mode (would normally be localStorage.getItem('darkMode'))
     useEffect(() => {
-        // In a real environment, this would be:
-        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
-        setDarkMode(savedDarkMode);
-        setDarkMode(false); // Default to light mode since localStorage isn't available
+        const darkMode = localStorage.getItem('theme') === 'dark';
+        setDarkMode(darkMode);
     }, []);
 
     // Sample product data
@@ -133,7 +132,7 @@ const Products = () => {
         // In a real environment: localStorage.setItem('darkMode', newDarkMode);
     };
 
-    const renderStars = (rating) => {
+    const renderStars = (rating: number) => {
         return Array.from({ length: 5 }, (_, i) => (
             <Star
                 key={i}
@@ -146,6 +145,7 @@ const Products = () => {
     const sidebarItems = [
         { icon: Package, label: "Products", active: true },
         { icon: User, label: "Your Profile" },
+        { icon: ConeIcon, label: "Sale Product" },
         { icon: Settings, label: "Settings" },
         { icon: LogOut, label: "Sign Out" }
     ];
@@ -344,9 +344,8 @@ const Products = () => {
                                     {sidebarItems.map((item, index) => (
                                         <button
                                             key={index}
-                                            className={`
-                        w-full flex items-center gap-3 px-3 py-2 text-left text-sm rounded-md transition-colors
-                        ${item.active
+                                            className={` w-full flex items-center gap-3 px-3 py-2 text-left text-sm rounded-md transition-colors
+                                                    ${item.active
                                                     ? darkMode
                                                         ? 'bg-blue-600 text-white'
                                                         : 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
@@ -354,7 +353,7 @@ const Products = () => {
                                                         ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
                                                         : 'text-gray-700 hover:bg-gray-50'
                                                 }
-                      `}
+                                       `}
                                         >
                                             <item.icon size={18} />
                                             <span className="font-medium">{item.label}</span>
