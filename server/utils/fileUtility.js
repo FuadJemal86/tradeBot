@@ -74,7 +74,7 @@ const uploadProductImage = multer({
     limits: {
         fileSize: 5 * 1024 * 1024, // 5MB limit
     },
-}).single("id_card");
+}).fields([{ name: "image1" }, { name: "image2" }, { name: "image3" }, { name: "image4" }])
 
 
 
@@ -84,21 +84,19 @@ const uploadProductImageMiddleware = (req, res, next) => {
         if (err) {
             return res.status(400).json({ message: err.message });
         }
-        // If file was uploaded, store the full path using normalized path
-        if (req.file) {
-            const relativePath = path.join(
-                "upload",
-                "Images",
-                "product",
-                "image",
-                req.file.filename
+
+        if (req.files && req.files.length > 0) {
+            // store paths for each uploaded file
+            req.filePaths = req.files.map(file =>
+                path.join("upload", "Images", "product", "image", file.filename)
+                    .split(path.sep).join("/") // normalize slashes
             );
-            // Convert Windows backslashes to forward slashes for URL consistency
-            req.file.fullPath = relativePath.split(path.sep).join("/");
         }
+
         next();
     });
-}
+};
+
 
 
 // Delete file utility function

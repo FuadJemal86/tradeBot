@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 interface ProductFormData {
@@ -139,27 +140,55 @@ export default function ProductForm() {
         setActiveStep(prevStep => prevStep - 1);
     };
 
-    const handleSubmit = () => {
-        if (validateStep(1)) {
-            console.log('Submitting product:', formData);
-            setSubmitSuccess(true);
+    const handleSubmit = async () => {
+        try {
+            if (validateStep(1)) {
+                // Create FormData object for file uploads
+                const formDataToSend = new FormData();
 
-            setTimeout(() => {
-                setFormData({
-                    name: '',
-                    description: '',
-                    category_id: '',
-                    trader_id: '',
-                    price: '',
-                    quantity: '',
-                    image1: null,
-                    image2: null,
-                    image3: null,
-                    image4: null,
+                // Add text fields
+                formDataToSend.append('name', formData.name);
+                formDataToSend.append('description', formData.description);
+                formDataToSend.append('category_id', formData.category_id);
+                formDataToSend.append('trader_id', formData.trader_id);
+                formDataToSend.append('price', formData.price);
+                formDataToSend.append('quantity', formData.quantity);
+
+                // Add image files (only if they exist)
+                if (formData.image1) formDataToSend.append('image1', formData.image1);
+                if (formData.image2) formDataToSend.append('image2', formData.image2);
+                if (formData.image3) formDataToSend.append('image3', formData.image3);
+                if (formData.image4) formDataToSend.append('image4', formData.image4);
+
+                const response = await axios.post('http://localhost:4000/trade/post-product', formDataToSend, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
                 });
-                setActiveStep(0);
-                setSubmitSuccess(false);
-            }, 3000);
+
+                if (response.data.status) {
+                    setSubmitSuccess(true);
+                    setFormData({
+                        name: '',
+                        description: '',
+                        category_id: '',
+                        trader_id: '',
+                        price: '',
+                        quantity: '',
+                        image1: null,
+                        image2: null,
+                        image3: null,
+                        image4: null,
+                    });
+                    setTimeout(() => {
+                        setActiveStep(0);
+                        setSubmitSuccess(false);
+                    }, 3000);
+                }
+            }
+        } catch (err) {
+            console.log('Error submitting form:', err);
+            // You might want to show an error message to the user here
         }
     };
 

@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 // const path = require("path");
 const tradeRout = require('./routes/tradRout');
 const prisma = require("./prisma");
+const path = require('path')
 
 dotenv.config();
 
@@ -25,7 +26,7 @@ app.use(express.json());
 
 
 app.use('/trade', tradeRout)
-
+app.use("/public", express.static(path.join(__dirname, "upload")));
 
 
 

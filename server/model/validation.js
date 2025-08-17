@@ -18,6 +18,11 @@ const PostProduct = Joi.object({
     price: Joi.number().required(),
     category_id: Joi.number().required(),
     quantity: Joi.number().required(),
+    trader_id: Joi.number().required(),
+    image1: Joi.string().optional().allow("", null),
+    image2: Joi.string().optional().allow("", null),
+    image3: Joi.string().optional().allow("", null),
+    image4: Joi.string().optional().allow("", null),
 });
 
 
