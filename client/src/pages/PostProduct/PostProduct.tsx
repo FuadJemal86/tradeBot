@@ -280,7 +280,7 @@ export default function ProductForm() {
                                 >
                                     <option value=""></option>
                                     {categories.map((category) => (
-                                        <option key={category.id} value={category.id.toString()}>
+                                        <option key={category.id} value={category.id}>
                                             {category.name}
                                         </option>
                                     ))}
@@ -313,7 +313,7 @@ export default function ProductForm() {
                                 >
                                     <option value=""></option>
                                     {traders.map((trader) => (
-                                        <option key={trader.id} value={trader.id.toString()}>
+                                        <option key={trader.id} value={trader.id}>
                                             {trader.name}
                                         </option>
                                     ))}

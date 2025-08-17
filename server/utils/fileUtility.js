@@ -85,17 +85,28 @@ const uploadProductImageMiddleware = (req, res, next) => {
             return res.status(400).json({ message: err.message });
         }
 
-        if (req.files && req.files.length > 0) {
-            // store paths for each uploaded file
-            req.filePaths = req.files.map(file =>
-                path.join("upload", "Images", "product", "image", file.filename)
-                    .split(path.sep).join("/") // normalize slashes
-            );
+        req.filePaths = [];
+
+        if (req.files) {
+            ["image1", "image2", "image3", "image4"].forEach((field) => {
+                if (req.files[field] && req.files[field][0]) {
+                    const file = req.files[field][0];
+                    req.filePaths.push(
+                        path
+                            .join("upload", "Images", "product", "image", file.filename)
+                            .split(path.sep)
+                            .join("/") // normalize slashes
+                    );
+                } else {
+                    req.filePaths.push(null); // keep order consistent
+                }
+            });
         }
 
         next();
     });
 };
+
 
 
 

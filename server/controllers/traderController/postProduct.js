@@ -15,20 +15,27 @@ const postProduct = async (req, res) => {
 
         const images = req.filePaths || [];
 
-        const data = {
-            name,
-            description,
-            category_id: parseInt(category_id),
-            quantity: parseInt(quantity),
-            image1: images[0] || null,
-            image2: images[1] || null,
-            image3: images[2] || null,
-            image4: images[3] || null,
-            price: parseFloat(price)
+        const product = await prisma.product.create({
+            data: {
+                name,
+                description,
+                quantity: parseInt(quantity),
+                price: parseFloat(price),
+                image1: images[0] || null,
+                image2: images[1] || null,
+                image3: images[2] || null,
+                image4: images[3] || null,
 
-        };
+                // Foreign keys
+                category: {
+                    connect: { id: parseInt(category_id) },
+                },
+                trader: {
+                    connect: { id: 1 }, // or req.body.trader_id
+                },
+            },
+        });
 
-        const product = await prisma.product.create({ data: data })
 
         const id = product.id
 
