@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 // const cookieParser = require("cookie-parser");
-// const path = require("path");
 const tradeRout = require('./routes/tradRout');
 const prisma = require("./prisma");
 const path = require('path')
@@ -34,10 +33,10 @@ app.use("/public", express.static(path.join(__dirname, "upload")));
 prisma
     .$connect()
     .then(() => {
-        console.log("✅ Connected to database via Prisma!");
+        console.log("Connected to database via Prisma!");
     })
     .catch((err) => {
-        console.error("❌ Database connection failed:", err.message);
+        console.error("Database connection failed:", err.message);
     });
 
 app.listen(process.env.PORT, () => {

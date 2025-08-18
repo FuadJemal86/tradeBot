@@ -272,11 +272,11 @@ export default function ProductForm() {
                                     value={formData.category_id}
                                     onChange={handleInputChange('category_id')}
                                     className={`
-                    w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                    ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
-                    ${errors.category_id ? 'border-red-500 ring-red-500' : ''}
-                  `}
+                                        w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
+                                        ${errors.category_id ? 'border-red-500 ring-red-500' : ''}
+                                    `}
                                 >
                                     <option value=""></option>
                                     {categories.map((category) => (
