@@ -34,12 +34,7 @@ const traders = [
 export default function ProductForm() {
     // For Claude artifacts - simulate localStorage check
     // In your actual implementation, use: localStorage.getItem('theme') === 'dark'
-    const [isDark, setIsDark] = useState(() => {
-        // Replace this line in your actual app with:
-        // return localStorage.getItem('theme') === 'dark';
-        return false; // Change to true to test dark mode
-    });
-
+    const [isDark, setIsDark] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [formData, setFormData] = useState<ProductFormData>({
         name: '',
@@ -57,9 +52,20 @@ export default function ProductForm() {
     const [submitSuccess, setSubmitSuccess] = useState(false);
 
     // In your actual app, uncomment this to check localStorage on mount:
+    // In ProductForm component
     useEffect(() => {
-        const darkMode = localStorage.getItem('theme') === 'dark';
-        setIsDark(darkMode);
+        const isDarkMode = localStorage.getItem('theme') === 'dark';
+        setIsDark(isDarkMode);
+
+        // Listen for dark mode changes
+        const handleDarkModeChange = (event: CustomEvent) => {
+            setIsDark(event.detail);
+        };
+
+        window.addEventListener('darkModeChange', handleDarkModeChange as EventListener);
+        return () => {
+            window.removeEventListener('darkModeChange', handleDarkModeChange as EventListener);
+        };
     }, []);
 
     const handleInputChange = (field: keyof ProductFormData) => (
@@ -205,23 +211,23 @@ export default function ProductForm() {
                                 value={formData.name}
                                 onChange={handleInputChange('name')}
                                 className={`
-                  w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                  ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
-                  ${errors.name ? 'border-red-500 ring-red-500' : ''}
-                `}
+                                w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
+                                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
+                                ${errors.name ? 'border-red-500 ring-red-500' : ''}
+                                `}
                                 placeholder=" "
                             />
                             <label
                                 htmlFor="name"
                                 className={`
-                  absolute left-4 transition-all duration-200 pointer-events-none
-                  ${formData.name || document.activeElement?.id === 'name'
+                                absolute left-4 transition-all duration-200 pointer-events-none
+                                ${formData.name || document.activeElement?.id === 'name'
                                         ? 'top-2 text-xs font-medium text-blue-600'
                                         : 'top-4 text-base text-gray-500'
                                     }
-                  ${isDark ? 'text-gray-400' : ''}
-                `}
+                                    ${isDark ? 'text-gray-400' : ''}
+                                    `}
                             >
                                 Product Name *
                             </label>

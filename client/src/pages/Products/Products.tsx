@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
     User,
     Settings,
@@ -15,8 +15,7 @@ import {
     Sun,
     ConeIcon
 } from 'lucide-react';
-
-const Products = () => {
+function Products() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [darkMode, setDarkMode] = useState(false);
@@ -126,11 +125,6 @@ const Products = () => {
     const startIndex = (currentPage - 1) * productsPerPage;
     const currentProducts = products.slice(startIndex, startIndex + productsPerPage);
 
-    const toggleDarkMode = () => {
-        const newDarkMode = !darkMode;
-        setDarkMode(newDarkMode);
-        // In a real environment: localStorage.setItem('darkMode', newDarkMode);
-    };
 
     const renderStars = (rating: number) => {
         return Array.from({ length: 5 }, (_, i) => (
@@ -142,50 +136,10 @@ const Products = () => {
         ));
     };
 
-    const sidebarItems = [
-        { icon: Package, label: "Products", active: true },
-        { icon: User, label: "Your Profile" },
-        { icon: ConeIcon, label: "Sale Product" },
-        { icon: Settings, label: "Settings" },
-        { icon: LogOut, label: "Sign Out" }
-    ];
+
 
     return (
-        <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-            {/* Header */}
-            <header className={`shadow-sm border-b sticky top-0 z-40 transition-colors duration-300 ${darkMode
-                ? 'bg-gray-800 border-gray-700'
-                : 'bg-white border-gray-200'
-                }`}>
-                <div className="flex items-center justify-between px-6 py-4">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className={`lg:hidden p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-                                }`}
-                        >
-                            <Menu size={20} className={darkMode ? 'text-gray-300' : 'text-gray-600'} />
-                        </button>
-                        <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-                            TradeBot
-                        </h1>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={toggleDarkMode}
-                            className={`p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-gray-700 text-gray-300' : 'hover:bg-gray-100 text-gray-600'
-                                }`}
-                        >
-                            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                        </button>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-blue-900' : 'bg-blue-100'
-                            }`}>
-                            <User size={20} className="text-blue-600" />
-                        </div>
-                    </div>
-                </div>
-            </header>
-
+        <div>
             <div className="flex">
                 {/* Main Content */}
                 <div className="flex-1">
@@ -301,77 +255,7 @@ const Products = () => {
                     </div>
                 </div>
 
-                {/* Right Sidebar - Simple Design */}
-                <div className={`
-                    fixed lg:static top-0 bottom-0 right-0 z-30 w-96 transform transition-transform duration-300 ease-in-out overflow-y-auto
-                    ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                    `}>
-                    <div className={`p-4 min-h-full ${darkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
-                        {/* Sidebar Card */}
-                        <div className={`rounded-lg shadow-sm border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                            }`}>
 
-                            {/* Header */}
-                            <div className={`p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${darkMode ? 'bg-blue-100' : 'bg-blue-100'
-                                            }`}>
-                                            <User size={20} className="text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <h3 className={`font-medium text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                John Doe
-                                            </h3>
-                                            <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Premium User
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => setSidebarOpen(false)}
-                                        className={`lg:hidden p-1.5 rounded hover:bg-gray-100 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
-                                            }`}
-                                    >
-                                        <X size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Navigation */}
-                            <div className="p-3">
-                                <nav className="space-y-1">
-                                    {sidebarItems.map((item, index) => (
-                                        <button
-                                            key={index}
-                                            className={` w-full flex items-center gap-3 px-3 py-2 text-left text-sm rounded-md transition-colors
-                                                    ${item.active
-                                                    ? darkMode
-                                                        ? 'bg-blue-600 text-white'
-                                                        : 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
-                                                    : darkMode
-                                                        ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                                                        : 'text-gray-700 hover:bg-gray-50'
-                                                }
-                                       `}
-                                        >
-                                            <item.icon size={18} />
-                                            <span className="font-medium">{item.label}</span>
-                                        </button>
-                                    ))}
-                                </nav>
-                            </div>
-
-                            {/* Footer */}
-                            <div className={`p-4 border-t text-center ${darkMode ? 'border-gray-700' : 'border-gray-200'
-                                }`}>
-                                <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                                    ShopHub v2.1.0
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Overlay for mobile */}
                 {sidebarOpen && (
@@ -382,7 +266,7 @@ const Products = () => {
                 )}
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Products;
+export default Products
