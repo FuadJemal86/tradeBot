@@ -1,5 +1,7 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import api from '../../service/api';
+import { Alert, Snackbar, CircularProgress } from "@mui/material";
+
 
 interface ProductFormData {
     name: string;
@@ -31,6 +33,14 @@ const traders = [
     { id: 4, name: 'Sarah Wilson' },
 ];
 
+const Spinner = () => {
+    return (
+        <div className="flex justify-center items-center">
+            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+    );
+};
+
 export default function ProductForm() {
     // For Claude artifacts - simulate localStorage check
     // In your actual implementation, use: localStorage.getItem('theme') === 'dark'
@@ -50,6 +60,8 @@ export default function ProductForm() {
     });
     const [errors, setErrors] = useState<Partial<ProductFormData>>({});
     const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
+    const [isLoading, setLoading] = useState(false)
 
     // In your actual app, uncomment this to check localStorage on mount:
     // In ProductForm component
@@ -147,6 +159,7 @@ export default function ProductForm() {
     };
 
     const handleSubmit = async () => {
+        setLoading(true)
         try {
             if (validateStep(1)) {
                 // Create FormData object for file uploads
@@ -164,15 +177,16 @@ export default function ProductForm() {
                 if (formData.image1) formDataToSend.append('image1', formData.image1);
                 if (formData.image2) formDataToSend.append('image2', formData.image2);
                 if (formData.image3) formDataToSend.append('image3', formData.image3);
-                if (formData.image4) formDataToSend.append('image4', formData.image4);
 
-                const response = await axios.post('http://localhost:4000/trade/post-product', formDataToSend, {
+                if (formData.image4) formDataToSend.append('image4', formData.image4);
+                const response = await api.post('/trade/post-product', formDataToSend, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
 
                 if (response.data.status) {
+                    setAlert({ type: "success", message: response.data.message });
                     setSubmitSuccess(true);
                     setFormData({
                         name: '',
@@ -195,6 +209,8 @@ export default function ProductForm() {
         } catch (err) {
             console.log('Error submitting form:', err);
             // You might want to show an error message to the user here
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -203,6 +219,7 @@ export default function ProductForm() {
             case 0:
                 return (
                     <div className="space-y-6">
+
                         {/* Product Name */}
                         <div className="relative">
                             <input
@@ -293,9 +310,9 @@ export default function ProductForm() {
                                 </select>
                                 <label
                                     className={`
-                    absolute left-4 top-2 text-xs font-medium transition-all duration-200 pointer-events-none
-                    ${formData.category_id ? 'text-blue-600' : isDark ? 'text-gray-400' : 'text-gray-500'}
-                  `}
+                                        absolute left-4 top-2 text-xs font-medium transition-all duration-200 pointer-events-none
+                                        ${formData.category_id ? 'text-blue-600' : isDark ? 'text-gray-400' : 'text-gray-500'}
+                                    `}
                                 >
                                     Category *
                                 </label>
@@ -310,12 +327,11 @@ export default function ProductForm() {
                                     id="trader"
                                     value={formData.trader_id}
                                     onChange={handleInputChange('trader_id')}
-                                    className={`
-                    w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                    ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
-                    ${errors.trader_id ? 'border-red-500 ring-red-500' : ''}
-                  `}
+                                    className={` w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
+                                                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                                ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
+                                                ${errors.trader_id ? 'border-red-500 ring-red-500' : ''}
+                                            `}
                                 >
                                     <option value=""></option>
                                     {traders.map((trader) => (
@@ -325,10 +341,9 @@ export default function ProductForm() {
                                     ))}
                                 </select>
                                 <label
-                                    className={`
-                    absolute left-4 top-2 text-xs font-medium transition-all duration-200 pointer-events-none
-                    ${formData.trader_id ? 'text-blue-600' : isDark ? 'text-gray-400' : 'text-gray-500'}
-                  `}
+                                    className={`absolute left-4 top-2 text-xs font-medium transition-all duration-200 pointer-events-none
+                                                ${formData.trader_id ? 'text-blue-600' : isDark ? 'text-gray-400' : 'text-gray-500'}
+                                            `}
                                 >
                                     Trader *
                                 </label>
@@ -337,13 +352,13 @@ export default function ProductForm() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </div >
                 );
 
             case 1:
                 return (
                     <div className="space-y-6">
-                        {/* Price and Quantity */}
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Price */}
                             <div className="relative">
@@ -354,26 +369,24 @@ export default function ProductForm() {
                                         id="price"
                                         value={formData.price}
                                         onChange={handleInputChange('price')}
-                                        className={`
-                      w-full pl-8 pr-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
-                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                      ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
-                      ${errors.price ? 'border-red-500 ring-red-500' : ''}
-                    `}
+                                        className={`w-full pl-8 pr-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
+                             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                            ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
+                            ${errors.price ? 'border-red-500 ring-red-500' : ''}
+                            `}
                                         placeholder=" "
                                         min="0"
                                         step="0.01"
                                     />
                                     <label
                                         htmlFor="price"
-                                        className={`
-                      absolute left-8 transition-all duration-200 pointer-events-none
-                      ${formData.price || document.activeElement?.id === 'price'
+                                        className={`absolute left-8 transition-all duration-200 pointer-events-none
+                                                    ${formData.price || document.activeElement?.id === 'price'
                                                 ? 'top-2 text-xs font-medium text-blue-600'
                                                 : 'top-4 text-base text-gray-500'
                                             }
-                      ${isDark ? 'text-gray-400' : ''}
-                    `}
+                                            ${isDark ? 'text-gray-400' : ''}
+                                            `}
                                     >
                                         Price *
                                     </label>
@@ -390,19 +403,17 @@ export default function ProductForm() {
                                     id="quantity"
                                     value={formData.quantity}
                                     onChange={handleInputChange('quantity')}
-                                    className={`
-                    w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                    ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
-                    ${errors.quantity ? 'border-red-500 ring-red-500' : ''}
-                  `}
+                                    className={`w-full px-4 pt-6 pb-2 text-base border rounded-lg transition-all duration-200
+                                                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                                ${isDark ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'}
+                                                ${errors.quantity ? 'border-red-500 ring-red-500' : ''}
+                                            `}
                                     placeholder=" "
                                     min="0"
                                 />
                                 <label
                                     htmlFor="quantity"
-                                    className={`
-                    absolute left-4 transition-all duration-200 pointer-events-none
+                                    className={`absolute left-4 transition-all duration-200 pointer-events-none
                     ${formData.quantity || document.activeElement?.id === 'quantity'
                                             ? 'top-2 text-xs font-medium text-blue-600'
                                             : 'top-4 text-base text-gray-500'
@@ -427,10 +438,9 @@ export default function ProductForm() {
                                 {(['image1', 'image2', 'image3', 'image4'] as const).map((imageField, index) => (
                                     <div
                                         key={imageField}
-                                        className={`
-                      aspect-square border-2 border-dashed rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md
-                      ${isDark ? 'border-gray-600 hover:border-blue-400' : 'border-gray-300 hover:border-blue-400'}
-                    `}
+                                        className={`aspect-square border-2 border-dashed rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md
+                                                    ${isDark ? 'border-gray-600 hover:border-blue-400' : 'border-gray-300 hover:border-blue-400'}
+                                                    `}
                                     >
                                         {formData[imageField] ? (
                                             <div className="relative h-full group">
@@ -459,10 +469,9 @@ export default function ProductForm() {
                                         ) : (
                                             <label
                                                 htmlFor={`image-${index}`}
-                                                className={`
-                          h-full flex flex-col items-center justify-center cursor-pointer transition-colors duration-200
-                          ${isDark ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-500'}
-                        `}
+                                                className={`h-full flex flex-col items-center justify-center cursor-pointer transition-colors duration-200
+                                                ${isDark ? 'text-gray-400 hover:text-blue-400' : 'text-gray-500 hover:text-blue-500'}
+                                                `}
                                             >
                                                 <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -490,34 +499,27 @@ export default function ProductForm() {
         }
     };
 
-    if (submitSuccess) {
-        return (
-            <div className={`min-h-screen p-6 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-                <div className="max-w-4xl mx-auto">
-                    <div className={`rounded-xl p-8 text-center shadow-lg ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-                        <div className="text-6xl mb-4">✅</div>
-                        <h2 className="text-3xl font-bold text-green-600 mb-4">
-                            Product Created Successfully!
-                        </h2>
-                        <p className={`text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                            Your product has been added to the system.
-                        </p>
-                        <div className="mt-6">
-                            <div className="inline-flex items-center px-6 py-3 bg-green-100 dark:bg-green-900 rounded-full">
-                                <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span className="text-green-700 dark:text-green-300 font-medium">All done!</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className={`min-h-screen p-6 transition-colors duration-300 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+            <>
+                {/* Material UI Snackbar */}
+                <Snackbar
+                    open={!!alert}
+                    autoHideDuration={4000}
+                    onClose={() => setAlert(null)}
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                >
+                    <Alert
+                        onClose={() => setAlert(null)}
+                        severity={alert?.type}
+                        variant="filled"
+                        sx={{ fontSize: "1rem", boxShadow: 3, borderRadius: 2 }}
+                    >
+                        {alert?.message}
+                    </Alert>
+                </Snackbar>
+            </>
             <div className="max-w-4xl mx-auto">
                 <h1 className={`text-4xl font-bold text-center mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     Add New Product
@@ -532,13 +534,11 @@ export default function ProductForm() {
                                     <div key={label} className="flex items-center">
                                         <div className="flex items-center space-x-3">
                                             <div
-                                                className={`
-                          w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300
-                          ${index <= activeStep
+                                                className={` w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300
+                                                       ${index <= activeStep
                                                         ? 'bg-blue-600 text-white shadow-lg'
                                                         : isDark ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-600'
-                                                    }
-                        `}
+                                                    } `}
                                             >
                                                 {index < activeStep ? (
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -548,18 +548,16 @@ export default function ProductForm() {
                                                     index + 1
                                                 )}
                                             </div>
-                                            <span className={`
-                        font-medium text-sm hidden sm:inline transition-colors duration-300
-                        ${index <= activeStep ? 'text-blue-600' : isDark ? 'text-gray-400' : 'text-gray-500'}
-                      `}>
+                                            <span className={`font-medium text-sm hidden sm:inline transition-colors duration-300
+                                                        ${index <= activeStep ? 'text-blue-600' : isDark ? 'text-gray-400' : 'text-gray-500'}
+                                                    `}>
                                                 {label}
                                             </span>
                                         </div>
                                         {index < steps.length - 1 && (
-                                            <div className={`
-                        w-16 h-0.5 mx-4 transition-colors duration-300
-                        ${index < activeStep ? 'bg-blue-600' : isDark ? 'bg-gray-700' : 'bg-gray-200'}
-                      `} />
+                                            <div className={`w-16 h-0.5 mx-4 transition-colors duration-300
+                                            ${index < activeStep ? 'bg-blue-600' : isDark ? 'bg-gray-700' : 'bg-gray-200'}
+                                        `} />
                                         )}
                                     </div>
                                 ))}
@@ -600,9 +598,16 @@ export default function ProductForm() {
                                     onClick={handleSubmit}
                                     className="flex items-center space-x-2 bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
                                 >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
+                                    {
+                                        isLoading ? (
+                                            <Spinner />
+                                        ) : (
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        )
+                                    }
+
                                     <span>Create Product</span>
                                 </button>
                             ) : (

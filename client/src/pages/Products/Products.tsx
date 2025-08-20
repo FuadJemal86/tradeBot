@@ -80,103 +80,11 @@ function Products() {
         fetchData()
     }, [])
 
-    // Sample product data
-    const products = [
-        {
-            id: 1,
-            name: "Premium Wireless Headphones",
-            price: 199.99,
-            rating: 4.8,
-            image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-            description: "High-quality wireless headphones with noise cancellation",
-            location: "New York, NY"
-        },
-        {
-            id: 2,
-            name: "Smart Watch Series X",
-            price: 299.99,
-            rating: 4.7,
-            image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop",
-            description: "Advanced fitness tracking and smart notifications",
-            location: "Los Angeles, CA"
-        },
-        {
-            id: 3,
-            name: "Professional Camera Lens",
-            price: 899.99,
-            rating: 4.9,
-            image: "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=300&h=300&fit=crop",
-            description: "50mm f/1.4 prime lens for professional photography",
-            location: "Chicago, IL"
-        },
-        {
-            id: 4,
-            name: "Gaming Mechanical Keyboard",
-            price: 149.99,
-            rating: 4.6,
-            image: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=300&h=300&fit=crop",
-            description: "RGB backlit mechanical keyboard for gaming",
-            location: "Austin, TX"
-        },
-        {
-            id: 5,
-            name: "Wireless Charging Pad",
-            price: 49.99,
-            rating: 4.4,
-            image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=300&h=300&fit=crop",
-            description: "Fast wireless charging for all compatible devices",
-            location: "Seattle, WA"
-        },
-        {
-            id: 6,
-            name: "Bluetooth Speaker",
-            price: 79.99,
-            rating: 4.5,
-            image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&h=300&fit=crop",
-            description: "Portable waterproof speaker with amazing sound",
-            location: "Miami, FL"
-        },
-        {
-            id: 7,
-            name: "Smartphone Stand",
-            price: 24.99,
-            rating: 4.3,
-            image: "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?w=300&h=300&fit=crop",
-            description: "Adjustable phone stand for desk and bedside",
-            location: "Denver, CO"
-        },
-        {
-            id: 8,
-            name: "USB-C Hub",
-            price: 89.99,
-            rating: 4.7,
-            image: "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=300&h=300&fit=crop",
-            description: "Multi-port USB-C hub with HDMI and charging",
-            location: "Boston, MA"
-        },
-        {
-            id: 9,
-            name: "Wireless Mouse",
-            price: 39.99,
-            rating: 4.2,
-            image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=300&h=300&fit=crop",
-            description: "Ergonomic wireless mouse with precision tracking",
-            location: "Portland, OR"
-        },
-        {
-            id: 10,
-            name: "Monitor Stand",
-            price: 119.99,
-            rating: 4.6,
-            image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&h=300&fit=crop",
-            description: "Adjustable monitor stand with storage drawer",
-            location: "Phoenix, AZ"
-        }
-    ];
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
+
+    const totalPages = Math.ceil(product.length / productsPerPage);
     const startIndex = (currentPage - 1) * productsPerPage;
-    const currentProducts = products.slice(startIndex, startIndex + productsPerPage);
+    const currentProducts = product.slice(startIndex, startIndex + productsPerPage);
 
 
     const renderStars = (rating: number) => {

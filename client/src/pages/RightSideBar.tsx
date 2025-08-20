@@ -58,9 +58,9 @@ const RightSideBar = () => {
     };
 
     const sidebarItems = [
-        { icon: Package, label: "Products", active: true },
+        { icon: Package, label: "Products", path: '/auth' },
         { icon: User, label: "Your Profile" },
-        { icon: ConeIcon, label: "Sale Product" },
+        { icon: ConeIcon, label: "Post Product", path: '/auth/post-product' },
         { icon: Settings, label: "Settings" },
         { icon: LogOut, label: "Sign Out" }
     ];
@@ -106,7 +106,7 @@ const RightSideBar = () => {
             </header>
 
             {/* Main Content and Sidebar Container */}
-            <div className="flex">
+            <div className="flex p-6">
                 {/* Main Content */}
                 <main className="flex-1 p-6">
                     <Outlet />
@@ -123,7 +123,7 @@ const RightSideBar = () => {
                 {/* Sidebar */}
                 <aside className={`
                     fixed top-0 right-0 h-full w-64 shadow-lg z-30 transition-transform duration-300 ease-in-out
-                    lg:relative lg:translate-x-0 lg:shadow-none
+                    lg:relative lg:translate-x-0 lg:shadow-none rounded-2xl
                     ${darkMode ? 'bg-gray-800' : 'bg-white'}
                     ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}
                 `}>
@@ -145,23 +145,33 @@ const RightSideBar = () => {
 
                         {/* Sidebar Navigation */}
                         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                            {sidebarItems.map((item, index) => (
-                                <button
-                                    key={index}
-                                    className={`w-full flex items-center gap-3 px-3 py-2 text-left text-sm rounded-md transition-colors
-                                        ${item.active
-                                            ? darkMode
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
-                                            : darkMode
-                                                ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                                                : 'text-gray-700 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    <item.icon size={18} />
-                                    <span className="font-medium">{item.label}</span>
-                                </button>
-                            ))}
+                            {sidebarItems.map((item, index) => {
+                                // Determine if the item is active based on current location
+                                const isActive = item.path && window.location.pathname === item.path;
+                                return (
+                                    <button
+                                        key={index}
+                                        className={`w-full flex items-center gap-3 px-3 py-2 text-left text-sm rounded-md transition-colors
+                                            ${isActive
+                                                ? darkMode
+                                                    ? 'bg-blue-600 text-white'
+                                                    : 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                                                : darkMode
+                                                    ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                                                    : 'text-gray-700 hover:bg-gray-50'
+                                            }`}
+                                        onClick={() => {
+                                            if (item.path) {
+                                                window.location.pathname = item.path;
+                                                setSidebarOpen(false);
+                                            }
+                                        }}
+                                    >
+                                        <item.icon size={18} />
+                                        <span className="font-medium">{item.label}</span>
+                                    </button>
+                                );
+                            })}
                         </nav>
                     </div>
                 </aside>
