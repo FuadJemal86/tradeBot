@@ -76,7 +76,7 @@ const RightSideBar = () => {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={toggleSidebar}
-                            className={`p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                            className={`md:hidden p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                                 }`}
                         >
                             {sidebarOpen ? (

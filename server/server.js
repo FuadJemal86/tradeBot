@@ -24,8 +24,8 @@ app.use(
 app.use(express.json());
 
 
-app.use('/trade', tradeRout)
-app.use("/public", express.static(path.join(__dirname, "upload")));
+app.use('/api/trade', tradeRout)
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 
 
 

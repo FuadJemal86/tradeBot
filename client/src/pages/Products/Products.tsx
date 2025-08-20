@@ -15,17 +15,70 @@ import {
     Sun,
     ConeIcon
 } from 'lucide-react';
+import api from '../../service/api';
+
+interface Product {
+    id: number,
+    name: string
+    quantity: number,
+    description: string,
+    image1: string,
+    image2: string,
+    image3: string,
+    image4: string,
+    product_price: {
+        price: string
+    }[],
+    trader: {
+        location: string
+    },
+    rate: {
+        rate: number
+    }[]
+}
+
+
 function Products() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [darkMode, setDarkMode] = useState(false);
+    const [product, setProducts] = useState<Product[]>([])
     const productsPerPage = 8;
 
     // Simulate localStorage check for dark mode (would normally be localStorage.getItem('darkMode'))
     useEffect(() => {
-        const darkMode = localStorage.getItem('theme') === 'dark';
-        setDarkMode(darkMode);
+        const isDarkMode = localStorage.getItem('theme') === 'dark';
+        setDarkMode(isDarkMode);
+
+        // Listen for dark mode changes
+        const handleDarkModeChange = (event: CustomEvent) => {
+            setDarkMode(event.detail);
+        };
+
+        window.addEventListener('darkModeChange', handleDarkModeChange as EventListener);
+        return () => {
+            window.removeEventListener('darkModeChange', handleDarkModeChange as EventListener);
+        };
     }, []);
+
+    const fetchData = async () => {
+        try {
+            const result = await api.get('/trade/get-product')
+            if (result.data.status) {
+                const data = result.data.products
+                setProducts(data)
+            } else {
+                console.log(result.data.message)
+            }
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     // Sample product data
     const products = [
@@ -155,7 +208,7 @@ function Products() {
 
                         {/* Products Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                            {currentProducts.map((product) => (
+                            {product.map((product) => (
                                 <div
                                     key={product.id}
                                     className={`rounded-xl shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300 ${darkMode
@@ -165,7 +218,7 @@ function Products() {
                                 >
                                     <div className="aspect-square overflow-hidden">
                                         <img
-                                            src={product.image}
+                                            src={`http://localhost:4000/${product?.image1}`}
                                             alt={product.name}
                                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                                         />
@@ -178,10 +231,10 @@ function Products() {
                                         </h3>
 
                                         <div className="flex items-center gap-1 mb-2">
-                                            {renderStars(product.rating)}
+                                            {renderStars(product.rate[0]?.rate)}
                                             <span className={`text-sm ml-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'
                                                 }`}>
-                                                ({product.rating})
+                                                ({product.rate[0]?.rate})
                                             </span>
                                         </div>
 
@@ -193,12 +246,12 @@ function Products() {
                                         <div className={`flex items-center gap-1 mb-3 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'
                                             }`}>
                                             <MapPin size={14} />
-                                            <span>{product.location}</span>
+                                            <span>{product.trader?.location}</span>
                                         </div>
 
                                         <div className="flex items-center justify-between">
                                             <span className="text-2xl font-bold text-blue-600">
-                                                ETB{product.price}
+                                                ETB{product.product_price[0]?.price}
                                             </span>
                                             <button className="flex items-center rounded-full bg-green-500 text-white hover:bg-green-700 transition-colors p-1.5 text-sm font-medium">
                                                 <Eye size={16} />

@@ -55,4 +55,49 @@ const postProduct = async (req, res) => {
     }
 }
 
-module.exports = { postProduct }
+
+// getProducts
+
+const getProduct = async (req, res) => {
+    try {
+        const products = await prisma.product.findMany({
+            select: {
+                name: true,
+                quantity: true,
+                description: true,
+                image1: true,
+                image2: true,
+                image3: true,
+                image4: true,
+                product_price: {
+                    select: {
+                        price: true
+                    }
+                },
+                trader: {
+                    select: {
+                        location: true
+                    }
+                },
+                rate: {
+                    select: {
+                        rate: true
+                    }
+                }
+            }
+        })
+
+        if (products.length === 0) {
+            return res.status(404).json({ status: false, message: 'No Product Found' })
+        }
+
+        return res.status(200).json({ status: true, products })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ status: false, message: 'network error' })
+
+    }
+}
+
+module.exports = { postProduct, getProduct }
