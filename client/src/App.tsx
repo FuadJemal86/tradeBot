@@ -3,9 +3,9 @@ import './App.css'
 import { Route, Routes } from "react-router-dom";
 import SignUp from './pages/TraderSignUp/SignUp';
 import NotFound from './pages/NotFound';
-import Products from './pages/Products/Products';
 import PostProduct from './pages/PostProduct/PostProduct';
 import RightSideBar from './pages/RightSideBar';
+import Products from './pages/AdminSide/product/Products';
 
 function App() {
 
